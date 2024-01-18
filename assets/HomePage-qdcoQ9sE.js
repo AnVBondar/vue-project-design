@@ -1,1 +1,0 @@
-import{_ as e}from"./_plugin-vue_export-helper-x3n3nnut.js";import{o,c}from"./index-Zz3OoGRw.js";const t={},r={style:{color:"black"}};function a(s,_){return o(),c("h1",r,"Home Page")}const m=e(t,[["render",a],["__scopeId","data-v-c8febc41"]]);export{m as default};
