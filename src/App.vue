@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import { Card } from './types/types';
+import {useRouter} from 'vue-router';
 
 const designData = ref<Card[]>([{
     id: 1,
@@ -54,24 +55,47 @@ const designData = ref<Card[]>([{
     published: true,
     images: [{id: 1, url: '/vue-project-design/images/image-3.png'}],
   },
-  {
-    id: 7,
-    code: '105',
-    name: 'Ostrov',
-    address: 'https://design105.horoshop.ua/',
-    published: true,
-    images: [{id: 1, url: '/vue-project-design/images/image-1.png'}],
-  },
-  {
-    id: 8,
-    code: '105',
-    name: 'Ostrov',
-    address: 'https://design105.horoshop.ua/',
-    published: true,
-    images: [{id: 1, url: '/vue-project-design/images/image-3.png'}],
-  },
+
 ]);
-import HomePage from './components/HomePage.vue'
+
+const storage = JSON.parse(localStorage.getItem('design') || '[]');
+
+if (storage.length > 0) {
+  designData.value = storage;
+}
+
+const data = ref<Card | null>(null);
+
+const router = useRouter();
+
+const chooseDesign = (item: Card) => {
+  data.value = item;
+
+  router.push('/design');
+};
+
+const handleChanges = (action: string, newItem: Card) => {
+  if (action === 'add') {
+    designData.value.push(newItem);
+    localStorage.setItem('design', JSON.stringify(designData.value));
+  } else {
+    const itemIndex = designData.value.findIndex(item => item.id === newItem.id);
+    console.log(newItem);
+    if (itemIndex > -1) {
+      designData.value.splice(itemIndex, 1, newItem);
+      localStorage.setItem('design', JSON.stringify(designData.value));
+    }
+  }
+
+  router.push('/');
+};
+
+const removeDesign = (id: number) => {
+  designData.value = designData.value.filter(item => item.id !== id);
+  localStorage.setItem('design', JSON.stringify(designData.value));
+
+  router.push('/');
+};
 </script>
 
 <template>
@@ -81,7 +105,13 @@ import HomePage from './components/HomePage.vue'
         <img src="./icons/logo.svg" alt="" class="logo">
       </a>
     </aside>
-    <HomePage :designData="designData"/>
+    <RouterView 
+      :designData="designData"
+      :data="data" 
+      @chooseDesign="chooseDesign"
+      @removeDesign="removeDesign"
+      @handleChanges="handleChanges"
+    />
   </main>
 </template>
 

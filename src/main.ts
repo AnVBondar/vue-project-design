@@ -11,6 +11,17 @@ const routes = [
     component: HomePage,
     props: true,
   },
+  { 
+    path: '/design',
+    name: 'DesignDetails',
+    component: () => import('./components/DesignDetails.vue'), 
+    props: true,
+  },
+  { 
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('./components/NotFound.vue'), 
+  },
 ];
 
 const router = createRouter({
