@@ -3,6 +3,7 @@ import {ref} from 'vue';
 import { Card } from './types/types';
 import {useRouter} from 'vue-router';
 
+//Stored here default data to render on page. 
 const designData = ref<Card[]>([{
     id: 1,
     code: '105',
@@ -58,12 +59,14 @@ const designData = ref<Card[]>([{
 
 ]);
 
+//Instead of localStorage can be sent request to server and replaced data if success if not, throw error.  
 const storage = JSON.parse(localStorage.getItem('design') || '[]');
 
 if (storage.length > 0) {
   designData.value = storage;
 }
 
+//Value for choosen design.
 const data = ref<Card | null>(null);
 
 const router = useRouter();

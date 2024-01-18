@@ -185,6 +185,11 @@ const checkImages = () => {
   }]
 }
 
+//Added below function to correctly render bg-image of file input as during deploy on GitHub it crushes to unknown reason.  
+const isImgLoad = computed(() => {
+  return uploadedImages.value.length > 0;
+})
+
 //Remain code responsible for drag and drop actions with imgs. To simplify code also can be used Vue Draggable or VueUse.
 let draggingItemId: number | null = null;
 
@@ -217,7 +222,8 @@ const handleDropItem = (targetItemId: number) => {
             <img src="../icons/arrow-left.svg" alt="">
           </div>
           <div class="design__status">
-            <!-- Indicator renders according to morkup. I didn't implement it dynamic via check input since not clear for me its next functional. -->
+            <!-- Indicator renders according to morkup. I didn't implement it 
+              dynamic via check input since not clear for me its next functional. -->
             <div 
               class="design__indicator" 
               :class="{'design__indicator--active': props.data?.published}"
@@ -272,7 +278,10 @@ const handleDropItem = (targetItemId: number) => {
             <label 
               for="upload-input" 
               class="upload__label"
-              :style="{ backgroundImage: uploadedImages.length > 0 ? 'url(/vue-project-design/src/icons/add.svg)' : 'url(/vue-project-design/src/icons/picture.svg)' }"
+              :class="{ 
+                'upload__label-add': isImgLoad,
+                'upload__label-picture': !isImgLoad,
+              }"
             >
               <input type="file" accept="image/*" id="upload-input" @change="handleFileUpload">
             </label>
@@ -448,6 +457,14 @@ const handleDropItem = (targetItemId: number) => {
 
     background-position: center;
     background-repeat: no-repeat;
+
+    &-add {
+      background-image: url('../icons/add.svg');
+    }
+
+    &-picture {
+      background-image: url('../icons/picture.svg');
+    }
   }
 
   &__item:hover {

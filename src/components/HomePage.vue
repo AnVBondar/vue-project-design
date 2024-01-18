@@ -10,6 +10,7 @@ const emit = defineEmits(['chooseDesign',]);
 </script>
 
 <template>
+  <!-- This section max-width is shorter then on mockup. Can be changed subject to full design / instructions -->
   <section class="homepage">
     <div class="homepage__container">
       <div class="homepage__top">
@@ -18,7 +19,10 @@ const emit = defineEmits(['chooseDesign',]);
       </div>
       <ul class="homepage__list">
         <li class="homepage__item" v-for="card in props.designData" :key="card.id">
-          <!-- Currently new downloaded image stratches to fit container but this property can be changed if necessary  -->
+          <!-- Currently new downloaded image stratches to fit container 
+            but this property can be changed if necessary.
+            Also hover affect added by my own for better UX.
+            Can be changed subject to User / designer request -->
           <div class="homepage__img-wrapp" @click="$emit('chooseDesign', card)">
             <img
               :src="card.images[0].url"
