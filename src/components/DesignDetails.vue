@@ -4,7 +4,6 @@ import {
   PropType, 
   ref, 
   computed, 
-  onMounted, 
 } from 'vue';
 import {Card, Images} from '../types/types';
 import {generateId} from '../utils/helper'
@@ -29,19 +28,20 @@ const fields = ref<Fields>({
 
 let uploadedImages = ref<Images[]>([]);
 
-onMounted(() => {
-  if (props.data) {
-    fields.value.address = props.data.address || '';
-    fields.value.code = props.data.code || '';
-    fields.value.name = props.data.name || '';
+// Once component is opened, below condition checking if Object with card was passed from parent and replace input values.
+if (props.data) {
+  fields.value.address = props.data.address || '';
+  fields.value.code = props.data.code || '';
+  fields.value.name = props.data.name || '';
 
-    uploadedImages.value = [...props.data.images];
-  }
-})
+  uploadedImages.value = [...props.data.images];
+}
 
+//Necessary to check if user trying to submit new form with emtpy fiels and throw warning to User.
 const codeError = ref<boolean>(false);
 const nameError = ref<boolean>(false);
 
+//Autocomplete address field when code is entered.
 const handleURL = computed(() => {
   if (fields.value.code.trim() !== '') {
     return `https://design${fields.value.code}.horoshop.ua/`;
@@ -50,7 +50,12 @@ const handleURL = computed(() => {
   }
 });
 
+//Allows to edit address field if same will be necessary.
+const handleAddress = (event: Event) => {
+  fields.value.address = (event.target as HTMLInputElement).value;
+};
 
+//Responsive for uploading files and checking files format.
 const handleFileUpload = (event: Event) => {
   event.preventDefault();
   const fileInput = event.target as HTMLInputElement;
@@ -69,10 +74,12 @@ const handleFileUpload = (event: Event) => {
   }
 };
 
+//Checking input file format
 const isImage = (file: File) => {
   return file.type.startsWith('image/');
 };
 
+//Format file to readable format, generate URL and push these data to uploadedImages.
 const readFile = (file: File) => {
   const reader = new FileReader();
 
@@ -89,6 +96,7 @@ const readFile = (file: File) => {
   reader.readAsDataURL(file);
 };
 
+//Drop file from User storage to web page.
 const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   const file = event.dataTransfer?.files[0];
@@ -105,8 +113,11 @@ const handleDrop = (event: DragEvent) => {
   }
 };
 
+//It's my understanding from mockup that code field should accept only numbers.
 const handleCodeInput = (event: Event) => {
-  codeError.value = false;
+  if (codeError.value) {
+    codeError.value = false;
+  }
 
   const inputValue = (event.target as HTMLInputElement).value;
 
@@ -116,14 +127,12 @@ const handleCodeInput = (event: Event) => {
 };
 
 const handleNameInput = (event: Event) => {
-  nameError.value = false;
+  if (nameError.value) {
+    nameError.value = false;
+  }
 
   fields.value.name = (event.target as HTMLInputElement).value;
 }
-
-const handleAddress = (event: Event) => {
-  fields.value.address = (event.target as HTMLInputElement).value;
-};
 
 const removeImg = (imgId: number) => {
   uploadedImages.value = uploadedImages.value.filter(img => img.id !== imgId);
@@ -164,6 +173,7 @@ const handleSubmit = () => {
   }
 }
 
+//If User trying to submit new form without img, this function auto add default img to render on HomePage.
 const checkImages = () => {
   if (uploadedImages.value.length > 0) {
     return [...uploadedImages.value];
@@ -175,6 +185,7 @@ const checkImages = () => {
   }]
 }
 
+//Remain code responsible for drag and drop actions with imgs. To simplify code also can be used Vue Draggable or VueUse.
 let draggingItemId: number | null = null;
 
 const handleDragStart = (itemId: number) => {
@@ -206,6 +217,7 @@ const handleDropItem = (targetItemId: number) => {
             <img src="../icons/arrow-left.svg" alt="">
           </div>
           <div class="design__status">
+            <!-- Indicator renders according to morkup. I didn't implement it dynamic via check input since not clear for me its next functional. -->
             <div 
               class="design__indicator" 
               :class="{'design__indicator--active': props.data?.published}"

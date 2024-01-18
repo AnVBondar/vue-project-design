@@ -18,6 +18,7 @@ const emit = defineEmits(['chooseDesign',]);
       </div>
       <ul class="homepage__list">
         <li class="homepage__item" v-for="card in props.designData" :key="card.id">
+          <!-- Currently new downloaded image stratches to fit container but this property can be changed if necessary  -->
           <div class="homepage__img-wrapp" @click="$emit('chooseDesign', card)">
             <img
               :src="card.images[0].url"
